@@ -1,13 +1,21 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
+
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
+    font-family: "Source Sans Pro", sans-serif;
+  display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 50px;
-    background-color: #f9f9f9;
+    background-color: #f5f6fa;
+	position:relative;
 }
-
+.contents{
+	min-height:100vh;
+	width:100%;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
 form {
     display: flex;
     flex-direction: column;
@@ -18,7 +26,16 @@ form {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
+nav{
+	height:70px;
+	width:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	background:black;
+	color:#fff;
+}
 input[type="text"],
 input[type="number"] {
     margin-bottom: 10px;
@@ -29,7 +46,7 @@ input[type="number"] {
 
 button {
     padding: 12px 20px;
-    background-color: #ff7f50;
+    background-color: #ffa502;
     color: #ffffff;
     border: none;
     border-radius: 5px;
