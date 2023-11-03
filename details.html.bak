@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Notes Management App</title>
+    <script src="pdfmake/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/vfs_fonts.js"></script>
+	<link rel="stylesheet" href="style.css">
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+<h1 style="font-size:25px; margin-top:25px; margin-bottom:2px;">Usman Kashif Resources for <span id="subname">Urdu</span></h1>
+
+   <table>
+        <thead style="background-color: red;">
+            <tr>
+                <th>Subject</th>
+                <th>Chapter Name</th>
+				
+                <th>Chapter No</th>
+                <th>SAVE / View</th>
+            </tr>
+        </thead>
+        <tbody id="cakesListTableBody"></tbody>
+    </table> 
+	<div class="documentViewWrap">
+	<div id="documentHeader"></div>
+	<div id="documentView"></div>
+</div>
+
+
+<script>
+window.onload = function() {
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var paramValue = urlParams.get('q');
+   
+   const div2 = document.querySelector(".documentViewWrap");
+	document.getElementById("subname").innerHTML = paramValue;
+   
+    // Function to display the cakes on the website
+    function displayCakes(cakes) {
+        const cakesListTableBody = document.getElementById("cakesListTableBody");
+        cakesListTableBody.innerHTML = "";
+		
+		  const filteredCakes = cakes.filter(cake => cake.subject.toLowerCase() === paramValue);
+
+ if (filteredCakes.length === 0) {
+        cakesListTableBody.innerHTML = `<center><p>No resources found!</p></center>`;
+}
+
+
+        filteredCakes.forEach((cake) => {
+            const row = document.createElement("tr");
+			
+			
+            const subjectCell = document.createElement("td");
+            subjectCell.textContent = cake.subject;
+
+            const chapNameCell = document.createElement("td");
+            chapNameCell.textContent = cake.chapterName;
+			
+			
+            const chapNameNo = document.createElement("td");
+            chapNameNo.textContent = cake.chapterNo;
+
+            const actionsCell = document.createElement("td");
+            const savePdfButton = document.createElement("button");
+            savePdfButton.textContent = "Save as PDF";
+            savePdfButton.addEventListener("click", () => {
+                generatePdf(cake);
+            });
+
+
+			const viewButton = document.createElement("button");
+            viewButton.textContent = "View";
+            viewButton.classList.add("viewButton");
+            document.getElementById("documentView").innerHTML = "";
+
+			viewButton.addEventListener("click", () => {
+			if (div2.style.display === "flex") {
+    div2.style.display = "none";
+} else {
+    div2.style.display = "flex";
+	
+				document.getElementById("documentView").innerHTML = cake.text;
+				
+				document.getElementById("documentHeader").innerHTML = `<p>cake.chapterName</p> <p>cake.chapterNo</p>`;;
+}
+
+			
+			
+            });
+
+			
+            actionsCell.appendChild(savePdfButton);
+			actionsCell.appendChild(viewButton);
+         
+            row.appendChild(subjectCell);
+            row.appendChild(chapNameCell);
+            row.appendChild(chapNameNo);
+            row.appendChild(actionsCell);
+
+            cakesListTableBody.appendChild(row);
+			
+        });
+    }
+
+    // Function to fetch the cakes from the backend
+    async function fetchCakes() {
+        try {
+           
+            const response = await fetch(
+                `https://energetic-teal-coati.cyclic.app/notes`
+            );
+            if (!response.ok) {
+                throw new Error("Error fetching cakes");
+            }
+            const data = await response.json();
+            displayCakes(data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    const generatePdf = (cake) => {
+            const docDefinition = {
+                content: [
+                    { text: `Subject: ${cake.subject}`, fontSize: 16, bold: true },
+                    { text: `Chapter Name: ${cake.chapterName}`, fontSize: 14 },
+                    { text: `Chapter No: ${cake.chapterNo}`, fontSize: 14 },
+					{ text: `Description: ${cake.text}`, fontSize: 14 },
+                ],
+            };
+
+            pdfMake.createPdf(docDefinition).download(`${cake.subject}.pdf`);
+        };
+        // Fetch all the buttons inside the table
+        const savePdfButtons = document.querySelectorAll("table button");
+
+        // Attach the click event listener to each "Save as PDF" button
+        savePdfButtons.forEach((button) => {
+            if (button.textContent === "Save as PDF") {
+                button.addEventListener("click", () => {
+                    // Find the corresponding cake data
+                    const tableRow = button.closest("tr");
+                    const dateCell = tableRow.querySelector("td:nth-child(1)").textContent;
+                    const titleCell = tableRow.querySelector("td:nth-child(2)").textContent;
+                    const descriptionCell = tableRow.querySelector("td:nth-child(3)").textContent;
+
+                    // Create a cake object with the extracted data
+                    const cake = {
+                        date: dateCell,
+                        title: titleCell,
+                        description: descriptionCell,
+                    };
+
+                    generatePdf(cake);
+                });
+            }
+        });
+
+        // Call fetchCakes when the page loads to display the cakes
+        fetchCakes();
+};
+    </script>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
-
+*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+}
 body {
     font-family: "Source Sans Pro", sans-serif;
   display: flex;
@@ -25,16 +29,22 @@ form {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin-top:20px;
 }
 nav{
-	height:70px;
+	height:80px;
 	width:100%;
 	position:absolute;
 	top:0;
 	left:0;
 	right:0;
-	background:black;
+	background:#242338;
 	color:#fff;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	 font-family: Calibri;
+  
 }
 input[type="text"],
 input[type="number"] {
@@ -52,29 +62,70 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+	margin-right:15px;
+	box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 button:hover {
     background-color: #ff6347;
 }
-
+.viewDiv{
+	width:100%;
+	padding:20px;
+	display:none;
+	
+}
 table {
     border-collapse: collapse;
     width: 70%;
-    margin-top: 20px;
+    margin-top: 0px;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	margin-bottom:100px;
-	margin-top:70px;
+	margin-top:20px;
 }
 
 td, th {
     border: 1px solid #e8e8e8;
     text-align: left;
     padding: 12px;
+	
+}
+th {
+    background-color:#242338;
+	color:#fff;
 }
 
-th {
-    background-color: #f5f5f5;
+
+.documentViewWrap{
+	width:100%;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	flex-direction:column;
+	text-align:center;
+	display:none;
+	box-shadow:0 5px 10px rgba(0,0,0,0.2);
+	max-width:800px;
+	margin-bottom:100px;
+}
+#documentView{
+	width:800px;
+	background:#fff;
+	min-height:50vh;
+	padding:20px;
+	margin-bottom:70px;
+}
+#documentHeader{
+	width:800px;
+	height:50px;
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	padding:0 20px;
+	background:#8eb1df;
+	border-top:2px solid black;
+	font-weight:600;
+	font-size:25px;
 }

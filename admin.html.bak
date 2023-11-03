@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Notes Management App</title>
+    <script src="pdfmake/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/vfs_fonts.js"></script>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<style>
+	.customForm{
+		width:600px;
+	}
+	#text{
+		height:150px;
+	}
+</style>
+<nav>
+	<center><h1>Usman Kashif Notes & Resources Dahboard Panel</h1></center>
+</nav>
+<h4 style="margin-top:100px;">Welcome to the dashboard page. You can save, update , view , delete & add notes from here.</h4>
+
+<div class="contents" style="margin-top:-50px;">
+
+    <form id="noteForm" class="customForm">
+        <label for="subject">Subject:</label><br>
+        <input type="text" id="subject" name="subject"><br>
+        <label for="chapterNo">Chapter No:</label><br>
+        <input type="number" id="chapterNo" name="chapterNo"><br>
+        <label for="chapterName">Chapter Name:</label><br>
+        <input type="text" id="chapterName" name="chapterName"><br>
+        <label for="text">Text:</label><br>
+        <input type="text" id="text" name="text"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+	</div>
+ 	
+
+   <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Chapter Name</th>
+				
+                <th>Chapter No</th>
+                <th>SAVE / DELETE</th>
+            </tr>
+        </thead>
+        <tbody id="cakesListTableBody"></tbody>
+    </table> 
+<div class="documentViewWrap">
+	<div id="documentHeader"></div>
+	<div id="documentView"></div>
+</div>
+
+
+
+	<script>
+   
+	document.getElementById('noteForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const subject = document.getElementById('subject').value;
+        const chapterNo = document.getElementById('chapterNo').value;
+        const chapterName = document.getElementById('chapterName').value;
+        const text = document.getElementById('text').value;
+
+        try {
+            const noteData = {
+                subject: subject,
+                chapterNo: chapterNo,
+                chapterName: chapterName,
+                text: text
+            };
+
+            const response = await fetch('https://energetic-teal-coati.cyclic.app/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(noteData),
+            });
+
+            if (response.ok) {
+                alert("Data submitted successfully");
+            } else {
+                alert("Failed to submit data. Please try again.");
+            }
+        } catch (error) {
+            alert('Error submitting data');
+            console.error('Error:', error);
+        }
+
+        // Clear the form after submitting
+        document.getElementById('subject').value = '';
+        document.getElementById('chapterNo').value = '';
+        document.getElementById('chapterName').value = '';
+        document.getElementById('text').value = '';
+		location.reload();
+    });
+	
+</script>
+
+
+
+
+
+<script>
+ const div2 = document.querySelector(".documentViewWrap");
+	   
+   // Function to display the cakes on the website
+    function displayCakes(cakes) {
+        const cakesListTableBody = document.getElementById("cakesListTableBody");
+        cakesListTableBody.innerHTML = "";
+
+        cakes.forEach((cake) => {
+            const row = document.createElement("tr");
+
+            const subjectCell = document.createElement("td");
+            subjectCell.textContent = cake.subject;
+
+            const chapNameCell = document.createElement("td");
+            chapNameCell.textContent = cake.chapterName;
+			
+			
+            const chapNameNo = document.createElement("td");
+            chapNameNo.textContent = cake.chapterNo;
+
+            const actionsCell = document.createElement("td");
+            const savePdfButton = document.createElement("button");
+            savePdfButton.textContent = "Save as PDF";
+            savePdfButton.addEventListener("click", () => {
+                generatePdf(cake);
+            });
+
+            const deleteButton = document.createElement("button");
+deleteButton.textContent = "Delete";
+deleteButton.addEventListener("click", async () => {
+  // Display a confirmation dialog before proceeding with deletion
+  const confirmDelete = confirm("Are you sure you want to delete this data?");
+
+  if (confirmDelete) {
+    try {
+      const response = await fetch(
+        `https://energetic-teal-coati.cyclic.app/notes/${cake._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // Refresh the cakes list after deletion
+        fetchCakes();
+      } else {
+        throw new Error("Error deleting Data");
+      }
+    } catch (error) {
+      alert("Error deleting data");
+      console.error(error);
+    }
+  } else {
+    // User clicked "Cancel," do nothing
+    return;
+  }
+});
+
+
+	const viewButton = document.createElement("button");
+            viewButton.textContent = "View";
+            viewButton.classList.add("viewButton");
+            document.getElementById("documentView").innerHTML = "";
+
+			viewButton.addEventListener("click", () => {
+			if (div2.style.display === "flex") {
+    div2.style.display = "none";
+} else {
+    div2.style.display = "flex";
+	
+				document.getElementById("documentView").innerHTML = cake.text;
+				
+				document.getElementById("documentHeader").innerHTML = `<p>${cake.chapterName}</p> <p>${cake.chapterNo}</p>`;;
+}
+
+			
+			
+            });
+
+		
+
+
+
+
+function populateFormForEdit(cake) {
+    document.getElementById('subject').value = cake.subject;
+    document.getElementById('chapterNo').value = cake.chapterNo;
+    document.getElementById('chapterName').value = cake.chapterName;
+    document.getElementById('text').value = cake.text;
+
+    const submitButton = document.querySelector('form button');
+    submitButton.textContent = 'Update';
+
+    // Update the submit event listener for the update functionality
+    document.getElementById('noteForm').removeEventListener('submit', submitHandler);
+    document.getElementById('noteForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const updatedData = {
+            subject: document.getElementById('subject').value,
+            chapterNo: document.getElementById('chapterNo').value,
+            chapterName: document.getElementById('chapterName').value,
+            text: document.getElementById('text').value,
+        };
+
+        await updateData(cake._id, updatedData);
+
+        // Reset the form after the update
+        document.getElementById('subject').value = '';
+        document.getElementById('chapterNo').value = '';
+        document.getElementById('chapterName').value = '';
+        document.getElementById('text').value = '';
+        submitButton.textContent = 'Submit';
+        document.getElementById('noteForm').removeEventListener('submit', submitHandler);
+        fetchCakes(); // Fetch cakes after the update
+    });
+}
+
+async function updateData(id, updatedData) {
+    try {
+        const response = await fetch(`https://energetic-teal-coati.cyclic.app/notes/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedData),
+        });
+
+        if (response.ok) {
+            alert('Data updated successfully');
+        } else {
+            throw new Error('Error updating data');
+        }
+    } catch (error) {
+        alert('Error updating data');
+        console.error('Error:', error);
+    }
+}
+
+
+			const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', () => {
+                
+				populateFormForEdit(cake);
+				
+            });
+
+
+
+            actionsCell.appendChild(savePdfButton);
+            actionsCell.appendChild(editButton);
+            actionsCell.appendChild(deleteButton);
+			actionsCell.appendChild(viewButton);
+         
+
+            row.appendChild(subjectCell);
+            row.appendChild(chapNameCell);
+            row.appendChild(chapNameNo);
+            row.appendChild(actionsCell);
+
+            cakesListTableBody.appendChild(row);
+        });
+    }
+
+    // Function to fetch the cakes from the backend
+    async function fetchCakes() {
+        try {
+           
+            const response = await fetch(
+                `https://energetic-teal-coati.cyclic.app/notes`
+            );
+            if (!response.ok) {
+                throw new Error("Error fetching cakes");
+            }
+            const data = await response.json();
+            displayCakes(data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    const generatePdf = (cake) => {
+            const docDefinition = {
+                content: [
+                    { text: `Subject: ${cake.subject}`, fontSize: 16, bold: true },
+                    { text: `Chapter Name: ${cake.chapterName}`, fontSize: 14 },
+                    { text: `Chapter No: ${cake.chapterNo}`, fontSize: 14 },
+					{ text: `Description: ${cake.text}`, fontSize: 14 },
+                ],
+            };
+
+            pdfMake.createPdf(docDefinition).download(`${cake.subject}.pdf`);
+        };
+        // Fetch all the buttons inside the table
+        const savePdfButtons = document.querySelectorAll("table button");
+
+        // Attach the click event listener to each "Save as PDF" button
+        savePdfButtons.forEach((button) => {
+            if (button.textContent === "Save as PDF") {
+                button.addEventListener("click", () => {
+                    // Find the corresponding cake data
+                    const tableRow = button.closest("tr");
+                    const dateCell = tableRow.querySelector("td:nth-child(1)").textContent;
+                    const titleCell = tableRow.querySelector("td:nth-child(2)").textContent;
+                    const descriptionCell = tableRow.querySelector("td:nth-child(3)").textContent;
+
+                    // Create a cake object with the extracted data
+                    const cake = {
+                        date: dateCell,
+                        title: titleCell,
+                        description: descriptionCell,
+                    };
+
+                    generatePdf(cake);
+                });
+            }
+        });
+
+        // Call fetchCakes when the page loads to display the cakes
+        fetchCakes();
+    </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
