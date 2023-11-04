@@ -88,7 +88,7 @@ window.onload = function() {
 	
 				document.getElementById("documentView").innerHTML = cake.text;
 				
-				document.getElementById("documentHeader").innerHTML = `<p>cake.chapterName</p> <p>cake.chapterNo</p>`;;
+				document.getElementById("documentHeader").innerHTML = `<p>${cake.chapterName}</p> <p>${cake.chapterNo}</p>`;;
 }
 
 			
