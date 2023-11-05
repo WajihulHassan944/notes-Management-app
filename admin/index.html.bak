@@ -28,7 +28,7 @@
 <nav>
 	<center><h1>Usman Kashif Notes & Resources Dahboard Panel</h1></center>
 </nav>
-<h4 style="margin-top:100px;">Welcome to the dashboard page. You can save, update , view , delete & add notes from here.</h4>
+<h4 style="margin-top:100px; margin-bottom:30px;">Welcome to the dashboard page. You can save, update , view , delete & add notes from here.</h4>
 
 <div class="contents" style="margin-top:0px;">
 
