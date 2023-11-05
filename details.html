@@ -94,7 +94,7 @@ window.onload = function() {
 } else {
     div2.style.display = "flex";
 	
-				document.getElementById("documentView").innerHTML = cake.text;
+				document.getElementById("documentView").innerHTML = `<div style="display:flex;flex-direction:column;"><h3>${cake.title}</h3><br> <p>${cake.text}</p></div>`;
 				
 				document.getElementById("documentHeader").innerHTML = `<p>${cake.chapterName}</p> <p>${cake.chapterNo}</p>`;;
 }
@@ -134,19 +134,40 @@ window.onload = function() {
         }
     }
 
-    const generatePdf = (cake) => {
-            const docDefinition = {
-                content: [
-                    { text: `Subject: ${cake.subject}`, fontSize: 16, bold: true },
-                    { text: `Chapter Name: ${cake.chapterName}`, fontSize: 14 },
-                    { text: `Chapter No: ${cake.chapterNo}`, fontSize: 14 },
-					{ text: `Description: ${cake.text}`, fontSize: 14 },
-                ],
-            };
+ 
 
-            pdfMake.createPdf(docDefinition).download(`${cake.subject}.pdf`);
-        };
-        // Fetch all the buttons inside the table
+const generatePdf = (cake) => {
+    const docDefinition = {
+        content: [
+           
+		   
+            { text: `Subject: ${cake.subject}`, fontSize: 16, alignment: 'center', margin: [0, 0, 0, 10] },
+			
+            { text: `Chapter Name: ${cake.chapterName}`, fontSize: 14, alignment: 'center', margin: [0, 0, 0, 10] },
+			
+            { text: `Chapter No: ${cake.chapterNo}`, fontSize: 14, alignment: 'center', margin: [0, 0, 0, 10] },
+			
+			
+            {
+                text: `Title: ${cake.title}`,
+                fontSize: 14,
+                alignment: 'center',
+                margin: [0, 0, 0, 10],
+                background: '#000',
+                color: '#fff',
+                bold: true,
+            },
+			
+            { text: `Description: ${cake.text}`, fontSize: 14, alignment: 'center', margin: [0, 0, 0, 10] },
+        ],
+    };
+
+    pdfMake.createPdf(docDefinition).download(`${cake.subject}.pdf`);
+};
+
+
+
+ // Fetch all the buttons inside the table
         const savePdfButtons = document.querySelectorAll("table button");
 
         // Attach the click event listener to each "Save as PDF" button

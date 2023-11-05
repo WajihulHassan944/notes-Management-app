@@ -28,7 +28,7 @@
 <nav>
 	<center><h1>Usman Kashif Notes & Resources Dahboard Panel</h1></center>
 </nav>
-<h4 style="margin-top:100px;">Welcome to the dashboard page. You can save, update , view , delete & add notes from here.</h4>
+<h4 style="margin-top:100px; margin-bottom:30px;">Welcome to the dashboard page. You can save, update , view , delete & add notes from here.</h4>
 
 <div class="contents" style="margin-top:0px;">
 
@@ -39,7 +39,12 @@
         <input type="number" id="chapterNo" name="chapterNo"><br>
         <label for="chapterName">Chapter Name:</label><br>
         <input type="text" id="chapterName" name="chapterName"><br>
-        <label for="text">Text:</label><br>
+        
+		<label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+        
+		
+		<label for="text">Text:</label><br>
         <input type="text" id="text" name="text"><br><br>
         <button type="submit">Submit</button>
     </form>
@@ -53,7 +58,7 @@
                 <th>Chapter Name</th>
 				
                 <th>Chapter No</th>
-                <th>SAVE / DELETE</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody id="cakesListTableBody"></tbody>
@@ -74,13 +79,15 @@
         const chapterNo = document.getElementById('chapterNo').value;
         const chapterName = document.getElementById('chapterName').value;
         const text = document.getElementById('text').value;
+		const title = document.getElementById('title').value;
 
         try {
             const noteData = {
                 subject: subject,
                 chapterNo: chapterNo,
                 chapterName: chapterName,
-                text: text
+                text: text,
+				title:title
             };
 
             const response = await fetch('https://energetic-teal-coati.cyclic.app/notes', {
@@ -106,6 +113,7 @@
         document.getElementById('chapterNo').value = '';
         document.getElementById('chapterName').value = '';
         document.getElementById('text').value = '';
+		document.getElementById('title').value = '';
 		location.reload();
     });
 	
@@ -186,9 +194,9 @@ deleteButton.addEventListener("click", async () => {
 } else {
     div2.style.display = "flex";
 	
-				document.getElementById("documentView").innerHTML = cake.text;
+				document.getElementById("documentView").innerHTML = `<div style="display:flex;flex-direction:column;"><h3>${cake.title}</h3><br> <p>${cake.text}</p></div>`;
 				
-				document.getElementById("documentHeader").innerHTML = `<p>${cake.chapterName}</p> <p>${cake.chapterNo}</p>`;;
+				document.getElementById("documentHeader").innerHTML = `<p>${cake.chapterName}</p> <p>${cake.chapterNo}</p>`;
 }
 
 			
@@ -205,6 +213,7 @@ function populateFormForEdit(cake) {
     document.getElementById('chapterNo').value = cake.chapterNo;
     document.getElementById('chapterName').value = cake.chapterName;
     document.getElementById('text').value = cake.text;
+	document.getElementById('title').value = cake.title;
 
     const submitButton = document.querySelector('form button');
     submitButton.textContent = 'Update';
@@ -219,6 +228,7 @@ function populateFormForEdit(cake) {
             chapterNo: document.getElementById('chapterNo').value,
             chapterName: document.getElementById('chapterName').value,
             text: document.getElementById('text').value,
+			title: document.getElementById('title').value,
         };
 
         await updateData(cake._id, updatedData);
@@ -228,6 +238,7 @@ function populateFormForEdit(cake) {
         document.getElementById('chapterNo').value = '';
         document.getElementById('chapterName').value = '';
         document.getElementById('text').value = '';
+        document.getElementById('title').value = '';
         submitButton.textContent = 'Submit';
         document.getElementById('noteForm').removeEventListener('submit', submitHandler);
         fetchCakes(); // Fetch cakes after the update
@@ -304,6 +315,7 @@ async function updateData(id, updatedData) {
                     { text: `Subject: ${cake.subject}`, fontSize: 16, bold: true },
                     { text: `Chapter Name: ${cake.chapterName}`, fontSize: 14 },
                     { text: `Chapter No: ${cake.chapterNo}`, fontSize: 14 },
+					{ text: `Title: ${cake.title}`, fontSize: 14 },
 					{ text: `Description: ${cake.text}`, fontSize: 14 },
                 ],
             };
